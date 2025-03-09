@@ -1,0 +1,152 @@
+{
+    "quotes": {
+        "intro": {
+            "label": "Intro Quotes",
+            "maximum": 1,
+            "defaults": [
+                {
+                    "text": "\"Dan nikahkanlah orang-orang yang masih membujang di antara kamu, dan juga orang-orang yang layak (menikah) dari hamba-hamba sahayamu yang laki-laki dan perempuan. Jika mereka miskin, Allah akan memberi kemampuan kepada mereka dengan karunia-Nya. Dan Allah Mahaluas (pemberian-Nya), Maha Mengetahui.\"",
+                    "author": "QS. An Nur : 31"
+                }
+            ]
+        }
+    },
+    "galleries": {
+        "groom": {
+            "label": "Groom Image",
+            "maximum": 1,
+            "aspect_ratio": 0.75,
+            "editable_components": ["image"],
+            "defaults": [{
+                "src": "/images/assets/photos/_918a597e-4a03-471e-9d99-1373e52db521-1.png",
+                "caption": "",
+                "description": ""
+            }]
+        },
+        "bride": {
+            "label": "Bride Image",
+            "maximum": 1,
+            "aspect_ratio": 0.75,
+            "editable_components": ["image"],
+            "defaults": [{
+                "src": "/images/assets/photos/_9a80e2db-2033-4aed-99a6-4e5d5bd259da-1.png",
+                "caption": "",
+                "description": ""
+            }]
+        },
+        "cover": {
+            "label": "Cover Image",
+            "maximum": 1,
+            "aspect_ratio": null,
+            "editable_components": ["image"],
+            "defaults": [{
+                "src": "/images/assets/photos/_0fe78821-1c29-467b-bc37-ffbc0bf805e4.jpg",
+                "caption": "",
+                "description": ""
+            }]
+        },
+        "story": {
+            "label": "Gallery: Our Story",
+            "maximum": 6,
+            "aspect_ratio": 1.4,
+            "editable_components": ["image", "caption", "description", "sequence"],
+            "defaults": [
+                {
+                    "src": "/images/assets/photos/_646c576a-4318-43c1-a070-f97a00cdfecc-1.png",
+                    "caption": "2016",
+                    "description": "First meeting"
+                },
+                {
+                    "src": "/images/assets/photos/_d29dd6ca-4971-46a1-a923-86b0a177e347-1.png",
+                    "caption": "2017",
+                    "description": "Getting on relationship"
+                },
+                {
+                    "src": "/images/assets/photos/_ae74d86c-f8fb-48b5-a567-91abd01efbb8-1.png",
+                    "caption": "2020",
+                    "description": "Graduation"
+                },
+                {
+                    "src": "/images/assets/photos/_05598511-b35f-48ab-9292-89071fff39f0-1.png",
+                    "caption": "2020",
+                    "description": "Working on passion"
+                }
+            ]
+        },
+        "moment": {
+            "label": "Gallery: Our Moment",
+            "maximum": 10,
+            "aspect_ratio": 1.35,
+            "editable_components": ["image", "caption", "description", "sequence"],
+            "defaults": [
+                {
+                    "src": "/images/assets/photos/_cc7a8a7b-bf55-4974-8395-171cd6a15564-1.png",
+                    "caption": "",
+                    "description": ""
+                },
+                {
+                    "src": "/images/assets/photos/_874a4941-b966-4d51-98a2-81136177cda4-1.png",
+                    "caption": "",
+                    "description": ""
+                },
+                {
+                    "src": "/images/assets/photos/_0dd6ebfc-8292-4320-955b-ae518bfcc220-1.png",
+                    "caption": "",
+                    "description": ""
+                }
+            ]
+        },
+        "carousel": {
+            "label": "Carousel",
+            "maximum": 6,
+            "aspect_ratio": 1.75,
+            "editable_components": ["image", "description", "sequence"],
+            "defaults": [
+                {
+                    "src": "/images/assets/photos/_da6aae52-cb42-4d85-bc99-33c5f5ab5e84-1.png",
+                    "caption": "",
+                    "description": "True love stories never have endings."
+                },
+                {
+                    "src": "/images/assets/photos/_ba138ae9-d7bf-478e-885d-905775253d5d-1.png",
+                    "caption": "",
+                    "description": "You don't love someone because they're perfect, you love them in spite of the fact that they're not."
+                },
+                {
+                    "src": "/images/assets/photos/_0fe78821-1c29-467b-bc37-ffbc0bf805e4-1.png",
+                    "caption": "",
+                    "description": "Love is not about possession. Love is about appreciation."
+                },
+                {
+                    "src": "/images/assets/photos/_80e2de48-a5f0-4496-a59e-fa6cfc90dbf6-1.png",
+                    "caption": "",
+                    "description": "Marriages, like a garden, take time to grow. But the harvest is rich unto those who patiently and tenderly care for the ground."
+                }
+            ]
+        }
+    },
+    "reception": {
+        "text": "Bergabunglah bersama kami untuk merayakan penyatuan dua hati dalam ikatan suci. Kami mengundang Anda untuk menyaksikan Akad Nikah kami, momen di mana janji setia terucap dan babak baru dalam cinta dimulai."
+    },
+    "ceremony": {
+        "text": "Kami menantikan kehadiran keluarga dan sahabat untuk merayakan perjalanan indah ini, dengan malam penuh cinta, tawa, dan kenangan yang akan dikenang."
+    },
+    "maps": {
+        "html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25186.465480308587!2d106.83122343811195!3d-6.1816490906303665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5d2db8c5617%3A0x4e446b7ac891d847!2sMonas%2C%20Gambir%2C%20Kecamatan%20Gambir%2C%20Kota%20Jakarta%20Pusat%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sen!2sid!4v1733640291489!5m2!1sen!2sid\" width=\"1000\" height=\"600\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "caption": "Monumen Nasional",
+        "description": "Merdeka Square, Jakarta, Jalan Lapangan Monas, Gambir, Central Jakarta City, Jakarta 10110"
+    },
+    "gift": {
+        "text": "Doa Restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi kado secara cashless ke nomor rekening atau dompet digital berikut :"
+    },
+    "rsvp": {
+        "text": "Kami nantikan kehadiran anda",
+        "maximum": 2
+    },
+    "music": {
+        "title": "I Will Spend My Whole Life Loving You",
+        "author": "Kina Grannis",
+        "file_name": "I Will Spend My Whole Life Loving You.mp3",
+        "src": "/musics/library/I Will Spend My Whole Life Loving You.mp3"
+    }
+}
