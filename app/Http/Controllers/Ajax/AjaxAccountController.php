@@ -68,6 +68,7 @@ class AjaxAccountController extends Controller
                     'user_id'           => auth()->user()->id
                 ], [
                     'full_name'         => $request->full_name,
+                    'gender'            => $request->gender,
                     'address_country'   => $request->address_country,
                     'address_city'      => $request->address_city,
                     'address_street'    => $request->address_street,

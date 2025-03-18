@@ -6,6 +6,11 @@
 .form-control-sm, .form-select-sm { font-size: .7rem; }
 .alert-danger { font-size: .7rem; padding: .5rem; margin-top: .5rem; }
 
+.form-select-sm {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-size: 1.5em;
+}
+
 @media (max-width: 1199px) {
 }
 </style>
@@ -33,7 +38,7 @@
                     <div class="text-center font-8em">
                         <img src="{{ asset('images/assets/user.jpg') }}" alt="" class="img-fluid shadow-lg rounded-circle">
                         <div class="mt-4">
-                            <input type="text" name="username" class="form-control p-1 border-0 border-bottom shadow-none text-center" value="{{ $user->username }}">
+                            <input type="text" name="username" placeholder="Username" class="form-control p-1 border-0 border-bottom shadow-none text-center" value="{{ $user->username }}" autocomplete="off">
                             <p class="alert alert-danger d-none form-account-alert-username"></p>
                         </div>
                         <p class="text-secondary mt-2">{{ $user->email }}</p>
@@ -41,8 +46,8 @@
                             <div class="p-2 rounded text-light font-8em" style="background: #3ab6da">{{ $user->web_role->name }}</div>
                         </div>
                         <div class="form-group mt-3">
-                            <input type="password" name="password" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Password">
-                            <input type="password" name="password_confirmation" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Confirm password">
+                            <input type="password" name="password" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Password" autocomplete="off">
+                            <input type="password" name="password_confirmation" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Confirm password" autocomplete="off">
                             <p class="alert alert-danger d-none form-account-alert-password"></p>
                         </div>
                         <div class="center-end mt-3">
@@ -57,10 +62,20 @@
                     <form action="/ajax/account" method="post" id="form-profile" class="form-handler">
                     <input type="hidden" name="action" value="save-profile">
                     <h5>User Data</h5>
-                    <div class="form-group mt-3">
-                        <label class="form-label">Full name</label>
-                        <input type="text" name="full_name" value="{{ $profile->full_name }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Full name">
-                        <p class="alert alert-danger d-none form-profile-alert-full_name"></p>
+                    <div class="form-group center gap-3 mt-3">
+                        <div class="col">
+                            <label class="form-label">Full name</label>
+                            <input type="text" name="full_name" value="{{ $profile->full_name }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Full name">
+                            <p class="alert alert-danger d-none form-profile-alert-full_name"></p>
+                        </div>
+                        <div class="min-w-120px">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select form-select-sm p-1 border-0 border-bottom shadow-none max-w-180px">
+                                <option value="" @if($profile->gender == '') selected @endif>Select</option>
+                                <option value="male" @if($profile->gender == 'male') selected @endif>Male</option>
+                                <option value="female" @if($profile->gender == 'female') selected @endif>Female</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group mt-3">
                         <label class="form-label">Address</label>
@@ -86,7 +101,7 @@
                     <div class="form-group mt-3">
                         <label class="form-label">Contact</label>
                         <div class="center flex-wrap gap-2">
-                            <select name="phone_code" class="form-control form-select-sm p-1 border-0 border-bottom shadow-none max-w-180px">
+                            <select name="phone_code" class="form-select form-select-sm p-1 border-0 border-bottom shadow-none max-w-180px">
                                 @foreach ($ipc as $item)
                                     <option value="{{ $item['code'] }}" @if($item['code'] == $profile->phone_code) selected @endif>{{ $item['country'] }} {{ $item['code'] }}</option>
                                 @endforeach

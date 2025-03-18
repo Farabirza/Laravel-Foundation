@@ -200,7 +200,7 @@ a:hover { color: inherit }
                         {{ auth()->user()->username != '' ? auth()->user()->username : auth()->user()->email }}
                     </span>
                     <ul class="dropdown-menu font-8em">
-                        <li><a class="dropdown-item center-start gap-2" href="/account/profile"><i class="bx bx-user"></i>Profile</a></li>
+                        <li><a class="dropdown-item center-start gap-2" href="/account/profile"><i class="bx bx-user"></i>My account</a></li>
                         <li><a class="dropdown-item center-start gap-2" href="/account/setting"><i class="bx bx-cog"></i>Setting</a></li>
                         <li><a class="dropdown-item center-start gap-2" href="/logout"><i class="bx bx-log-out-circle"></i>Log out</a></li>
                     </ul>

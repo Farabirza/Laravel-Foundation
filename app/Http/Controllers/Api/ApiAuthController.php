@@ -3,16 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\LoginRequest;
+use App\Services\Logs;
+use App\Models\WebRole;
 
+use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
+use App\Http\Requests\RegisterRequest;
 
 class ApiAuthController extends Controller
 {
+    protected $logs;
+
+    public function __construct()
+    {
+        $this->logs = new Logs('ApiAuthController');
+    }
+
     public function users()
     {
         return response()->json([
@@ -23,10 +32,16 @@ class ApiAuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $this->validateError();
+
+        $web_user_role = WebRole::where('name', 'basic_user')->first()->id;
+        $latestSeq = (User::max('seq') ?? 0) + 1;
+        $username = "User{$latestSeq}";
+
         $user = User::create([
-            'username' => $request->username,
+            'username' => $username,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'web_role_id' => $web_user_role,
         ]);
         $token = $user->createToken('token')->plainTextToken;
         if(!$user) {
@@ -34,6 +49,7 @@ class ApiAuthController extends Controller
                 'alert' => 'Registration failed!',
             ], 400);
         }
+        $this->logs->write("New user has registered! \r\n Username \t : {$username} \r\n Email \t\t : {$request->email}");
         return response()->json([
             'message' => 'You have registered successfully!',
             'token' => $token,

@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|unique:users',
+            // 'username' => 'required|unique:users',
             'email' => 'email|required|unique:users',
             'password' => 'required',
             'password_confirmation' => 'required|same:password'
@@ -32,7 +32,7 @@ class RegisterRequest extends FormRequest
     public function attributes()
     {
         return [
-            'username.required' => 'username is required',
+            // 'username.required' => 'username is required',
             'email.required' => 'email is required',
             'email.email' => 'please use proper email format',
             'email.unique' => 'this email is already registered',

@@ -14,6 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, GenerateUuid;
 
     protected $guarded = ['id'];
+    public $incrementing = false;
 
     protected $hidden = [
         'password',
@@ -26,6 +27,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $latestSeq = User::max('seq') ?? 0;
+            $user->seq = $latestSeq + 1;
+        });
     }
 
     public function web_role()

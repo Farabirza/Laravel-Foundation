@@ -67,7 +67,7 @@ $(document).ready(function(){
 });
 
 // -------------------- Form Handler Start -------------------- //
-$('.form-handler').submit(function(e) {
+$('.form-handler').off('submit').submit(function(e) {
     e.preventDefault();
     $('.alert').hide().html('');
     let formName = $(this).attr('id');

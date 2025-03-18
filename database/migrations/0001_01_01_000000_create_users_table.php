@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
             $table->foreignUuid('web_role_id');
+            $table->bigInteger('seq')->unsigned();
 
             $table->string('picture')->nullable();
             $table->string('username', 24)->nullable();
@@ -18,10 +19,16 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('google_id')->unique()->nullable();
+
+            $table->dateTime('last_login')->nullable();
+            $table->dateTime('failed_login')->nullable();
+            $table->integer('failed_login_attempt')->default(0);
+            $table->string('otp_code')->nullable();
+            $table->dateTime('otp_exp')->nullable();
+            $table->string('status', 24)->default('active');
+
             $table->rememberToken();
             $table->timestamps();
-
-            $table->primary(['id', 'username', 'email']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->uuid('user_id');
 
             $table->string('full_name', 50);
+            $table->string('gender', 6)->nullable();
             $table->string('address_country', 50)->nullable();
             $table->string('address_city', 50)->nullable();
             $table->string('address_street', 50)->nullable();

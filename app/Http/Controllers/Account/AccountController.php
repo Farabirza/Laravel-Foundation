@@ -16,6 +16,7 @@ class AccountController extends Controller
 
         $profile = (object) [
             'full_name' => '',
+            'gender' => '',
             'address_country' => '',
             'address_city' => '',
             'address_street' => '',
