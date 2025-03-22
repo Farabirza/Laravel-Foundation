@@ -47,3 +47,8 @@ Route::group([
     Route::post('/auth', [AjaxAuthController::class, 'action']);
 });
 
+// Route::get('/test', function() {
+//     return view('mails.otp');
+// });
+
+

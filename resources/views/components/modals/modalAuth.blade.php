@@ -77,23 +77,28 @@
                     <button type="button" class="btn-close btn-cancel" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="my-3">
-                    <form action="/ajax/auth" method="post" id="form-recovery-otp" class="form-handler">
+                    <form action="/ajax/auth" method="post" id="form-recovery-otp" class="">
                     <input type="hidden" name="action" value="send-otp">
                     <div class="form-floating">
                         <input type="text" name="email" class="form-control form-sm" placeholder="email" autocomplete="off">
                         <label class="label">Email</label>
                         <p class="alert alert-danger d-none form-recovery-otp-alert-email"></p>
                     </div>
-                    <div class="mt-3 center-end">
+                    <div class="mt-3 center-between">
+                        <div class="spinner-container">
+                            <div id="countdown" class="font-9em"></div>
+                            <div class="spinner spinner-sm d-none"></div>
+                        </div>
                         <button type="submit" class="btn btn-outline-dark rounded-pill font-7em py-2 px-3">Send OTP Code</button>
                     </div>
                     </form>
                     <hr>
                     <div class="mt-3">
-                        <p class="font-8em">An email will be sent to your address, check your inbox to get the OTP code and enter it into the fields below along with the new password.</p>
+                        <p class="font-8em">An email will be sent to your address. Check your inbox to get the OTP code and enter it into the fields below along with the new password.</p>
                     </div>
                     <form action="/ajax/auth" method="post" id="form-submit-otp">
                     <input type="hidden" name="action" value="submit-otp">
+                    <div class="alert alert-success text-sm p-2 mt-3 d-none"></div>
                     <div class="form-group mt-3">
                         <div class="alert alert-danger d-none form-submit-otp-alert-otp"></div>
                         <div class="center-around gap-2">
@@ -104,10 +109,10 @@
                             <input type="text" name="otp_code[4]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
                             <input type="text" name="otp_code[5]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
                         </div>
+                        <div class="alert alert-danger d-none form-submit-otp-alert-otp_codes"></div>
                     </div>
                     <div class="form-group mt-3">
                         <input type="password" name="password" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="New password">
-                        <div class="alert alert-danger form-submit-otp-alert-password text-sm p-2 mt-2 d-none"></div>
                     </div>
                     <div class="form-group mt-3">
                         <input type="password" name="password_confirmation" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Confirm new password">
@@ -182,28 +187,96 @@ function switchAuthModal(type) {
 
 function showPasswordRecoveryModal() {
     $('.modal').modal('hide');
-    // $('#modal-auth-form')[0].reset();
     $('#modal-password-recovery').modal('show');
 }
 
+$('#form-recovery-otp').off('submit').on('submit', function(e) {
+    e.preventDefault();
+    $('.alert').hide().html('');
+    $('#countdown').hide();
+
+    let formName = $(this).attr('id');
+    let $spinner = $(this).find('.spinner');
+    let formData = new FormData($(this)[0]);
+    let config = { method: $(this).attr('method'), url: domain + $(this).attr('action'), data: formData, };
+
+    $spinner.hide().removeClass('d-none').fadeIn('slow');
+    axios(config)
+    .then((response) => {
+        $spinner.hide().addClass('d-none');
+        successMessage(response.data.message);
+        if(response.data.otp_exp) {
+            startCountdown(response.data.otp_exp);
+            $('#countdown').show();
+        }
+    })
+    .catch((error) => {
+        console.log(error);
+        if(error.response.data.message) errorMessage(error.response.data.message);
+        if(error.response.data && error.response.data.errors) validationMessage(error.response.data.errors, formName);
+        if(error.response.data.otp_exp) {
+            startCountdown(error.response.data.otp_exp);
+            $('#countdown').show();
+        }
+        $spinner.hide().addClass('d-none');
+    });
+});
+
 $('#form-submit-otp').off('submit').on('submit', function(e) {
     e.preventDefault();
+    $('.alert').hide().html('');
+
+    let $form = $('#form-submit-otp');
     let $alert = $('.form-submit-otp-alert-otp');
     let formData = new FormData($(this)[0]);
     let email = $('#form-recovery-otp').find("input[name='email']").val();
     formData.append('email', email);
-    console.log(email);
 
     $alert.html('').addClass('d-none');
     axios.post(domain + $(this).attr('action'), formData)
     .then((res) => {
-        console.log(res);
+        $form.find('.alert-success').hide().removeClass('d-none').fadeIn('slow').html(res.data.message);
+        $form.trigger('reset');
     })
     .catch((err) => {
-        let message = err.response.data.message ?? 'Reset password failed';
-        $alert.removeClass('d-none').show().html(err.response.data.message);
+        let message = err.response.data.message ?? '';
+        if(message != '') $alert.removeClass('d-none').show().html(message);
+        if(err.response.data && err.response.data.errors) validationMessage(err.response.data.errors, 'form-submit-otp');
     });
 });
+
+let countdownInterval;
+function startCountdown(targetDateTime) {
+    clearInterval(countdownInterval); // Clear previous interval if exists
+
+    let targetTime = new Date(targetDateTime.replace(/-/g, '/')); // Convert to Date object
+
+    if (isNaN(targetTime)) {
+        document.getElementById("countdown").innerText = "Invalid date format!";
+        return;
+    }
+
+    countdownInterval = setInterval(() => {
+        let now = new Date();
+        let diff = targetTime - now;
+
+        if (diff <= 0) {
+            clearInterval(countdownInterval);
+            document.getElementById("countdown").innerText = "";
+            return;
+        }
+
+        let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        if(minutes < 10) minutes = '0'+minutes;
+        if(seconds < 10) seconds = '0'+seconds;
+
+        document.getElementById("countdown").innerText =
+            `${minutes}:${seconds}`;
+    }, 1000);
+}
 
 $(document).ready(function () {
     $(".otp-input").on("input", function () {

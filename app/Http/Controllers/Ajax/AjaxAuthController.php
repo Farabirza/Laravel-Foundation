@@ -7,6 +7,7 @@ use App\Models\RSVP;
 use App\Models\User;
 use App\Mail\OtpMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AjaxController;
@@ -47,21 +48,27 @@ class AjaxAuthController extends AjaxController
 
             case 'send-otp':
                 $validator = Validator::make($request->all(), [
-                    'email' => ['required', 'email'],
+                    'email' => ['required', 'email', 'exists:users,email'],
                 ], [
+                    'email.exists' => 'Invalid credentials',
                     'email.required' => 'Please insert your email',
                     'email.email' => 'Invalid email format'
                 ]);
                 if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
 
+                $user_query = User::where('email', $request->email);
+                $user = $user_query->first();
+
+                if($user->status != 'active') return response()->json(['message' => 'Your account is disabled. Contact admin for further inquiry'], 400);
+                if($user->otp_exp != '' && date('Y-m-d H:i:s') <= $user->otp_exp) return response()->json([
+                    'message' => 'Wait until the required time',
+                    'otp_exp' => $user->otp_exp,
+                ], 422);
+
                 $otp = rand(100000, 999999);
-                $otp_exp = now()->addMinutes(5);
+                $otp_exp = date('Y-m-d H:i:s', strtotime('+5 minutes'));
 
-                Session::put('otp', $otp);
-                Session::put('otp_email', $request->email);
-                Session::put('otp_expires_at', $otp_exp);
-
-                User::where('email', $request->email)->update([
+                $user_query->update([
                     'otp_code' => $otp,
                     'otp_exp' => $otp_exp,
                 ]);
@@ -77,7 +84,7 @@ class AjaxAuthController extends AjaxController
             case 'submit-otp':
                 $otp_code = '';
                 foreach($request->otp_code as $code) $otp_code .= $code;
-                // print_r($otp_code);exit();
+                $request->merge(['otp_codes' => $otp_code]);
 
                 $user_query = User::where('email', $request->email);
                 $user = $user_query->first();
@@ -85,8 +92,21 @@ class AjaxAuthController extends AjaxController
                 $current_time = date('Y-m-d H:i:s');
 
                 if($user == '') return response()->json(['message' => 'Invalid credential'], 400);
+                if($user->status != 'active') return response()->json(['message' => 'Your account is disabled. Contact admin for further inquiry'], 400);
                 if($user->otp_exp == '') return response()->json(['message' => 'Please generate OTP code to reset your password'], 400);
                 if($current_time >= $user->otp_exp) return response()->json(['message' => 'OTP code has expired, please generate a new one'], 400);
+
+                $validator = Validator::make($request->all(), [
+                    'otp_codes' => [ 'required', 'min:6' ],
+                    'password' => [ 'required', 'min:6', 'confirmed' ],
+                ], [
+                    'otp_codes.required' => 'Please insert the OTP code',
+                    'otp_codes.min' => 'OTP code requires at least 6 characters',
+                    'password.required' => 'Password cannot be empty',
+                    'password.min' => 'Password requires at least 6 characters',
+                    'password.confirmed' => "Password confirmation doesn't match",
+                ]);
+                if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
 
                 if($user->otp_code != $otp_code) {
                     $failed_attempt = $user->failed_login_attempt == '' ? 0 : $user->failed_login_attempt;
@@ -122,6 +142,7 @@ class AjaxAuthController extends AjaxController
                     'otp_exp' => null,
                     'last_login' => $current_time,
                     'failed_login_attempt' => 0,
+                    'password' => Hash::make($request->password),
                 ]);
                 return response()->json([
                     'message' => "Password successfully reset",

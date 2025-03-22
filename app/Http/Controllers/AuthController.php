@@ -19,12 +19,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $user = User::where('username', $request->email)->orWhere('email', $request->email)->first();
-        if($user) {
+        $query = User::where('username', $request->email)->orWhere('email', $request->email);
+        if($user = $query->first()) {
             if(Auth::attempt([
                 'email' => $user->email, 'password' => $request->password
             ], $request->remember)) {
                 $request->session()->regenerate();
+                $query->update([
+                    'last_login' => date('Y-m-d H:i:s')
+                ]);
                 return redirect()->intended('/');
             }
         }

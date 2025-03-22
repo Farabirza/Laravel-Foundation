@@ -7,6 +7,7 @@
 
 #section-intro {
     background: linear-gradient(45deg, rgba(1, 1, 1, .7), rgba(1, 1, 1, .9)), url("{{ asset('images/assets/photos/dekstop.jpg') }}");
+    background-size: cover;
     color: #f1f1f1;
 }
 

@@ -71,14 +71,17 @@ $('.form-handler').off('submit').submit(function(e) {
     e.preventDefault();
     $('.alert').hide().html('');
     let formName = $(this).attr('id');
+    let $spinner = $(this).find('.spinner');
     let formData = ($(this).attr('method') == "post") ? new FormData($(this)[0]) : $(this).serialize();
     let config = {
         method: $(this).attr('method'), url: domain + $(this).attr('action'), data: formData,
     };
+    $spinner.hide().removeClass('d-none').fadeIn('slow');
     axios(config)
     .then((response) => {
-        $('#alert-success').hide().removeClass('d-none').fadeIn('slow').append(response.data.message);
+        $spinner.hide().addClass('d-none');
         successMessage(response.data.message);
+        $(`.${formName}-alert-success`).hide().removeClass('d-none').fadeIn('slow').html(response.data.message);
         if(response.data.refresh == true) window.location.reload();
         if(response.data.reset == true) $(this).trigger('reset');
     })
@@ -86,9 +89,8 @@ $('.form-handler').off('submit').submit(function(e) {
         console.log(error);
         console.log(error.response);
         if(error.response.data.message) errorMessage(error.response.data.message);
-        if(error.response.data) {
-            validationMessage(error.response.data.errors, formName);
-        }
+        if(error.response.data && error.response.data.errors) validationMessage(error.response.data.errors, formName);
+        $spinner.hide().addClass('d-none');
     });
 });
 const validationMessage = (errorObject, formName = '') => {
