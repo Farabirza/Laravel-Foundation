@@ -218,7 +218,7 @@ $('#form-recovery-otp').off('submit').on('submit', function(e) {
     })
     .catch((error) => {
         console.log(error);
-        $alert_error.hide().removeClass('d-none').fadeIn('slow').html(error.response.data.message);
+        if(error.response.data.message) $alert_error.hide().removeClass('d-none').fadeIn('slow').html(error.response.data.message);
         if(error.response.data && error.response.data.errors) validationMessage(error.response.data.errors, formName);
         if(error.response.data.otp_exp) {
             startCountdown(error.response.data.otp_exp);

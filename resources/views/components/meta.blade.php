@@ -4,15 +4,15 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 @if(isset($metaTags))
-<meta name="title" content="{{$metaTags['title'] ?? 'ruangnamu.com'}}" />
+<meta name="title" content="{{$metaTags['title'] ?? 'Laravel Foundation'}}" />
 <meta name="description" content="{{$metaTags['description'] ?? 'Buat undangan digitalmu sendiri!'}}" />
-<meta name="keywords" lan="id" content="{{$metaTags['keywords'] ?? 'ruangnamu.com, undangan digital, undangan pernikahan'}}" />
-<meta property="og:title" content="{{$metaTags['title'] ?? 'ruangnamu.com'}}" />
+<meta name="keywords" lan="id" content="{{$metaTags['keywords'] ?? 'Laravel Foundation, undangan digital, undangan pernikahan'}}" />
+<meta property="og:title" content="{{$metaTags['title'] ?? 'Laravel Foundation'}}" />
 <meta property="og:type" content="website" />
 <meta property="og:description" content="{{$metaTags['description'] ?? 'Buat undangan digitalmu sendiri!'}}" />
-<meta property="og:site_name" content="ruangnamu.com"/>
+<meta property="og:site_name" content="Laravel Foundation"/>
 <meta property="og:url" content="{{ url()->current() }}" />
-<meta property="og:site_name" content="www.ruangnamu.com" />
+<meta property="og:site_name" content="www.Laravel Foundation" />
 <!-- <meta property="og:image" content="{{ isset($metaTags['image']) ? asset('images/materials/'.$metaTags['image']) : asset('images/materials/landing.jpg') }}" /> -->
 <meta property="og:image:type" content="image/jpg" />
 <meta property="og:image:width" content="1366" />
@@ -20,10 +20,10 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:site" content="@ruangnamu"/>
 <meta name="twitter:creator" content="@ruangnamu"/>
-<meta name="twitter:title" content="{{$metaTags['title'] ?? 'ruangnamu.com'}}"/>
+<meta name="twitter:title" content="{{$metaTags['title'] ?? 'Laravel Foundation'}}"/>
 <!-- <meta name="twitter:image" content="{{ isset($metaTags['image']) ? asset('images/materials/'.$metaTags['image']) : asset('images/materials/landing.jpg') }}" /> -->
 
-<title>{{$metaTags['title'] ?? 'ruangnamu.com'}}</title>
+<title>{{$metaTags['title'] ?? 'Laravel Foundation'}}</title>
 @endif
 
 <!-- Favicons -->

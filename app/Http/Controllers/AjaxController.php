@@ -10,7 +10,7 @@ abstract class AjaxController
 
     public function __construct() {
         $this->metaTags = [
-            'title' => 'ruangnamu.com',
+            'title' => 'Laravel Foundation',
             'description' => 'Buat undanganmu sendiri!',
         ];
     }

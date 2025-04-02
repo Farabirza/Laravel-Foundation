@@ -52,22 +52,30 @@ class AuthController extends Controller
             $google = Socialite::driver('google')->user();
             $user = User::where('google_id', $google->id)->first();
             if($user) {
+
+                $access = $this->account_status($user, User::where('google_id', $google->id));
+                if($access[0] == false) return redirect('/')->with('error', $access[1]);
+
                 Auth::login($user);
                 return redirect()->intended('/');
             } else {
                 if(!$user_by_email = User::where('email', $google->email)->first()) {
                     return view('auth.create_username', [
                         'metaTags' => $this->metaTags,
-                        'title' => 'ruangnamu.com',
+                        'title' => 'Laravel Foundation',
                         'user' => $google,
                     ]);
                 }
+
+                $access = $this->account_status($user_by_email, User::where('email', $google->email));
+                if($access[0] == false) return redirect('/')->with('error', $access[1]);
+
                 Auth::login($user_by_email);
                 return redirect()->intended('/');
             }
         } catch (\Throwable $th) {
             $this->logs->write($th->getMessage());
-            return redirect('/?info=Autentikasi gagal');
+            return redirect('/?info=Authentication failed');
         }
     }
 
@@ -83,5 +91,40 @@ class AuthController extends Controller
         ]);
         Auth::login($create);
         return redirect()->intended('/');
+    }
+
+    public function account_status($user, $user_query)
+    {
+        $access = true;
+        $message = 'Your account is disabled. Contact admin for further inquiry';
+
+        try {
+            switch($user->status) {
+                case 'active':
+                    $access = true;
+                    $message = '';
+                break;
+                case 'locked':
+                    $failedLogin = strtotime($user->failed_login);
+                    $currentTime = time();
+                    if(($currentTime - $failedLogin) < 86400) {
+                        $access = false; // reject before 24 hours this account got locked
+                    } else {
+                        $user_query->update([
+                            'status'        => 'active',
+                            'failed_login'  => null,
+                        ]);
+                    }
+                break;
+                default:
+                    $access = false;
+                break;
+            }
+        } catch(\Exception $e) {
+            $access = false;
+            $message = $e->getMessage();
+            $this->logs->write($e->getMessage());
+        }
+        return [$access, $message];
     }
 }

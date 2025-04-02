@@ -18,7 +18,7 @@
 @if(isset($title))
     <title>{{$title}}</title>
     @else
-    <title>ruangnamu.com</title>
+    <title>Laravel Foundation</title>
     @endif
 @stack('css-styles')
 <style>

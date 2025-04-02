@@ -23,7 +23,7 @@
             </div>
             <div class="modal-footer">
                 <div class="center-end gap-3">
-                    <button type="button" class="cropper-submit btn btn-primary center gap-2 px-4 rounded-pill"><i class='bx bx-crop' ></i>Select</button>
+                    <button type="button" class="cropper-submit btn btn-sm btn-dark center gap-2 px-3 rounded-pill"><i class='bx bx-crop' ></i>Select</button>
                 </div>
             </div>
             </form>
