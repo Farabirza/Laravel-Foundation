@@ -79,6 +79,7 @@
                 <div class="my-3">
                     <form action="/ajax/auth" method="post" id="form-recovery-otp" class="">
                     <input type="hidden" name="action" value="send-otp">
+                    <div id="modal-password-recovery-alert" class="alert alert-danger text-sm p-2 mb-3 d-none"></div>
                     <div class="form-floating">
                         <input type="text" name="email" class="form-control form-sm" placeholder="email" autocomplete="off">
                         <label class="label">Email</label>
@@ -94,7 +95,7 @@
                     </form>
                     <hr>
                     <div class="mt-3">
-                        <p class="font-8em">An email will be sent to your address. Check your inbox to get the OTP code and enter it into the fields below along with the new password.</p>
+                        <p class="font-8em">An email will be sent to your address. Check your inbox to get the OTP code and enter it into the field below along with the new password.</p>
                     </div>
                     <form action="/ajax/auth" method="post" id="form-submit-otp">
                     <input type="hidden" name="action" value="submit-otp">
@@ -102,12 +103,12 @@
                     <div class="form-group mt-3">
                         <div class="alert alert-danger d-none form-submit-otp-alert-otp"></div>
                         <div class="center-around gap-2">
-                            <input type="text" name="otp_code[0]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
-                            <input type="text" name="otp_code[1]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
-                            <input type="text" name="otp_code[2]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
-                            <input type="text" name="otp_code[3]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
-                            <input type="text" name="otp_code[4]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
-                            <input type="text" name="otp_code[5]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off">
+                            <input type="text" name="otp_code[0]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off" placeholder="-">
+                            <input type="text" name="otp_code[1]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off" placeholder="-">
+                            <input type="text" name="otp_code[2]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off" placeholder="-">
+                            <input type="text" name="otp_code[3]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off" placeholder="-">
+                            <input type="text" name="otp_code[4]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off" placeholder="-">
+                            <input type="text" name="otp_code[5]" class="otp-input form-control form-control-sm p-1 border-0 border-bottom shadow-none text-center fw-bold" maxlength="1" autocomplete="off" placeholder="-">
                         </div>
                         <div class="alert alert-danger d-none form-submit-otp-alert-otp_codes"></div>
                     </div>
@@ -131,6 +132,7 @@
 
 @push('scripts')
 <script type="text/javascript">
+// ==================== Authentication Start ==================== //
 var authAction = '/';
 $('#modal-auth-btn-submit').on('click', function(e) {
     e.preventDefault();
@@ -147,8 +149,8 @@ $('#modal-auth-btn-submit').on('click', function(e) {
     })
     .catch((error) => {
         console.log(error.response.data);
-        if(error.response.data.alert) {
-            $('#modal-auth-alert').hide().removeClass('d-none').fadeIn('slow').html(error.response.data.alert);
+        if(error.response.data.message) {
+            $('#modal-auth-alert').hide().removeClass('d-none').fadeIn('slow').html(error.response.data.message);
         }
         if(error.response.data != undefined) {
             validationMessage(error.response.data.errors);
@@ -184,7 +186,9 @@ function switchAuthModal(type) {
         break;
     }
 }
+// ==================== Authentication End ==================== //
 
+// ==================== Password Recovery Start ==================== //
 function showPasswordRecoveryModal() {
     $('.modal').modal('hide');
     $('#modal-password-recovery').modal('show');
@@ -197,10 +201,12 @@ $('#form-recovery-otp').off('submit').on('submit', function(e) {
 
     let formName = $(this).attr('id');
     let $spinner = $(this).find('.spinner');
+    let $alert_error = $('#modal-password-recovery-alert');
     let formData = new FormData($(this)[0]);
     let config = { method: $(this).attr('method'), url: domain + $(this).attr('action'), data: formData, };
 
     $spinner.hide().removeClass('d-none').fadeIn('slow');
+    $alert_error.hide();
     axios(config)
     .then((response) => {
         $spinner.hide().addClass('d-none');
@@ -212,7 +218,7 @@ $('#form-recovery-otp').off('submit').on('submit', function(e) {
     })
     .catch((error) => {
         console.log(error);
-        if(error.response.data.message) errorMessage(error.response.data.message);
+        $alert_error.hide().removeClass('d-none').fadeIn('slow').html(error.response.data.message);
         if(error.response.data && error.response.data.errors) validationMessage(error.response.data.errors, formName);
         if(error.response.data.otp_exp) {
             startCountdown(error.response.data.otp_exp);
@@ -244,6 +250,7 @@ $('#form-submit-otp').off('submit').on('submit', function(e) {
         if(err.response.data && err.response.data.errors) validationMessage(err.response.data.errors, 'form-submit-otp');
     });
 });
+// ==================== Password Recovery End ==================== //
 
 let countdownInterval;
 function startCountdown(targetDateTime) {

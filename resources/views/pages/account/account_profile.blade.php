@@ -11,6 +11,23 @@
     background-size: 1.5em;
 }
 
+.item-overlay {
+    opacity: 0;
+    position: absolute !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+    text-align: center;
+    color: #202020;
+}
+.item-overlay:hover {
+    opacity: 1;
+    transition: .4s ease-in-out;
+}
+
 @media (max-width: 1199px) {
 }
 </style>
@@ -35,8 +52,15 @@
                 <div class="col-md-3 px-3 mb-3">
                     <form action="/ajax/account" method="post" id="form-account" class="form-handler">
                     <input type="hidden" name="action" value="update-account">
+                    <input type="hidden" name="picture_base64" class="form-account-base64">
                     <div class="text-center font-8em">
-                        <img src="{{ asset('images/assets/user.jpg') }}" alt="" class="img-fluid shadow-lg rounded-circle">
+                        <div class="position-relative shadow-lg rounded-circle overflow-hidden">
+                            <div class="item-overlay">
+                                <label for="form-account-picture" type="button"><i class="bx bx-camera font-24em"></i></label>
+                            </div>
+                            <img src="{{ auth()->user()->profile_picture_url }}" alt="" class="account-picture-preview img-fluid">
+                            <input type="file" name="picture" id="form-account-picture" accept="image/*" class="cropper-input d-none" data-cropper-type="basic" data-cropper-preview=".account-picture-preview" data-cropper-result=".form-account-base64">
+                        </div>
                         <div class="mt-4">
                             <input type="text" name="username" placeholder="Username" class="form-control p-1 border-0 border-bottom shadow-none text-center" value="{{ $user->username }}" autocomplete="off">
                             <p class="alert alert-danger d-none form-account-alert-username"></p>
@@ -120,6 +144,9 @@
         </div>
     </section>
 </div>
+
+@include('components.modals.modalCropper')
+
 @endsection
 
 @push('scripts')

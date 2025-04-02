@@ -39,6 +39,23 @@ class User extends Authenticatable
         });
     }
 
+    public function getProfilePictureUrlAttribute()
+    {
+        if (!$this->picture) {
+            return asset('images/assets/user.jpg'); // Default profile image
+        }
+        return url('images/users/' . $this->picture);
+
+        // If stored in 'storage/app/public/users/', use:
+        // return Storage::url('users/' . $this->picture);
+
+        // If stored in 'public/images/users/', use:
+        // return url('images/users/' . $this->picture);
+
+        // If stored in AWS S3 or another disk, use:
+        // return Storage::disk('s3')->url('users/' . $this->picture);
+    }
+
     public function web_role()
     {
         return $this->belongsTo(WebRole::class, 'web_role_id');

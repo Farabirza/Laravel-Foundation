@@ -447,7 +447,7 @@ to {transform: rotate(359deg);}
 /* Shine end */
 
 /* overlay start */
-.item-container { position: relative; }
+/* .item-container { position: relative; }
 .item-overlay {
     position: absolute;
     display: flex;
@@ -463,9 +463,9 @@ to {transform: rotate(359deg);}
     transition: .5s ease;
 }
 .item-container:hover .item-overlay {
-top: 0;
-height: 100%;
-}
+    top: 0;
+    height: 100%;
+} */
 /* overlay end */
 
 /* -------------------------------- Customized style start -------------------------------- */

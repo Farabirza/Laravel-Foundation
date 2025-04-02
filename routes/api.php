@@ -18,6 +18,3 @@ Route::post('/tokens/create', function (Request $request) {
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
-
-Route::resource('/rsvp', ApiRSVPController::class)->only('store');
-Route::get('/rsvp-fetch/{invitation_id}', [ApiRSVPController::class, 'fetch']);

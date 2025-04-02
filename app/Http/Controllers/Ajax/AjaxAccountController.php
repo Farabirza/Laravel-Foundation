@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Ajax;
 
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Logs;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AjaxAccountController extends Controller
+class AjaxAccountController extends AjaxController
 {
     protected $logs;
 
@@ -27,6 +28,7 @@ class AjaxAccountController extends Controller
         if(!$request->has('action')) return response()->json('Request not valid', 400);
         switch($request->action) {
             case 'update-account':
+                // print_r($request->all());exit();
                 $validator = Validator::make($request->all(), [
                     'username' => ['required', 'max:50', 'unique:users,username,'.auth()->user()->id],
                     'password' => [
@@ -48,6 +50,23 @@ class AjaxAccountController extends Controller
                     User::where('id', auth()->user()->id)->update([
                         'password' => Hash::make($request->password),
                     ]);
+                }
+
+                // Process user picture
+                if($request->has('picture_base64') && $request->picture_base64 != '') {
+                    $base64Image = $request->picture_base64;
+
+                    try {
+                        $file_name = auth()->user()->id;
+                        $storeImage = $this->storeImage($base64Image, 'images/users', $file_name);
+                        if($storeImage[0] == true) {
+                            User::find(auth()->user()->id)->update([
+                                'picture' => $storeImage[2]
+                            ]);
+                        }
+                    } catch(\Exception $e) {
+                        $this->logs->write($e->getMessage());
+                    }
                 }
 
                 DB::commit();

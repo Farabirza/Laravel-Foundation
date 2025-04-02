@@ -46,7 +46,7 @@ class ApiAuthController extends Controller
         $token = $user->createToken('token')->plainTextToken;
         if(!$user) {
             return response()->json([
-                'alert' => 'Registration failed!',
+                'message' => 'Registration failed!',
             ], 400);
         }
         $this->logs->write("New user has registered! \r\n Username \t : {$username} \r\n Email \t\t : {$request->email}");
@@ -59,7 +59,32 @@ class ApiAuthController extends Controller
     public function login(LoginRequest $request)
     {
         $this->validateError();
-        $user = User::where('username', $request->email)->orWhere('email', $request->email)->first();
+        $user_query = User::where('username', $request->email)->orWhere('email', $request->email);
+        $user = $user_query->first();
+
+        if(!$user) return response()->json(['message' => 'Invalid credentials'], 400);
+        if($user->status != 'active') {
+            $access = true;
+            switch($user->status) {
+                case 'locked':
+                    $failedLogin = strtotime($user->failed_login);
+                    $currentTime = time();
+                    if(($currentTime - $failedLogin) < 86400) {
+                        $access = false; // reject before 24 hours this account got locked
+                    } else {
+                        $user_query->update([
+                            'status'        => 'active',
+                            'failed_login'  => null,
+                        ]);
+                    }
+                break;
+                default:
+                    $access = false;
+                break;
+            }
+            if($access == false) return response()->json(['message' => 'Your account is disabled. Contact admin for further inquiry'], 400);
+        }
+
         if(Auth::attempt([
             'email' => $user->email, 'password' => $request->password
         ], $request->remember)) {
@@ -70,7 +95,7 @@ class ApiAuthController extends Controller
             ], 200);
         } else {
             return response()->json([
-                'alert' => "Username atau password yang anda masukan tidak sesuai"
+                'message' => "Invalid credentials"
             ], 400);
         }
     }
