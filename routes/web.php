@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Ajax\AjaxAuthController;
+use App\Http\Controllers\Ajax\AjaxAdminController;
 use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\Ajax\AjaxAccountController;
-use App\Http\Controllers\Ajax\AjaxAuthController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/login', function() { return redirect('/'); } )->name('login');
@@ -45,6 +46,7 @@ Route::group([
     ], function () {
     Route::post('/account', [AjaxAccountController::class, 'action']);
     Route::post('/auth', [AjaxAuthController::class, 'action']);
+    Route::post('/admin', [AjaxAdminController::class, 'action']);
 });
 
 // Route::get('/test', function() {

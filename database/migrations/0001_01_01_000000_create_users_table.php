@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->dateTime('otp_exp')->nullable();
             $table->string('status', 24)->default('active');
+            $table->string('status_reason')->nullable();
 
             $table->rememberToken();
             $table->timestamps();

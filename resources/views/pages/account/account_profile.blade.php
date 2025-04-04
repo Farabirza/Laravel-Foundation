@@ -36,7 +36,7 @@
 @section('content')
 
 <div id="content-wrapper">
-    <div class="center-between">
+    <div class="center-between mb-3">
         <h5>User Profile</h5>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb font-8em">
@@ -54,11 +54,11 @@
                     <input type="hidden" name="action" value="update-account">
                     <input type="hidden" name="picture_base64" class="form-account-base64">
                     <div class="text-center font-8em">
-                        <div class="position-relative shadow-lg rounded-circle overflow-hidden">
+                        <div class="position-relative border shadow-lg rounded-circle overflow-hidden">
                             <div class="item-overlay">
                                 <label for="form-account-picture" type="button"><i class="bx bx-camera font-24em"></i></label>
                             </div>
-                            <img src="{{ auth()->user()->profile_picture_url }}" alt="" class="account-picture-preview img-fluid">
+                            <img src="{{ auth()->user()->picture_url }}" alt="" class="account-picture-preview img-fluid">
                             <input type="file" name="picture" id="form-account-picture" accept="image/*" class="cropper-input d-none" data-cropper-type="basic" data-cropper-preview=".account-picture-preview" data-cropper-result=".form-account-base64">
                         </div>
                         <div class="mt-4">

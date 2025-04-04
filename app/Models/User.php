@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\GenerateUuid;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, GenerateUuid;
 
     protected $guarded = ['id'];
+    protected $appends = ['picture_url', 'created_date'];
     public $incrementing = false;
 
     protected $hidden = [
@@ -39,7 +41,7 @@ class User extends Authenticatable
         });
     }
 
-    public function getProfilePictureUrlAttribute()
+    public function getPictureUrlAttribute()
     {
         if (!$this->picture) {
             return asset('images/assets/user.jpg'); // Default profile image
@@ -54,6 +56,11 @@ class User extends Authenticatable
 
         // If stored in AWS S3 or another disk, use:
         // return Storage::disk('s3')->url('users/' . $this->picture);
+    }
+
+    public function getCreatedDateAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('Y-m-d');
     }
 
     public function web_role()
