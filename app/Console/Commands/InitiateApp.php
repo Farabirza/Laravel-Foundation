@@ -26,6 +26,7 @@ class InitiateApp extends Command
 
     public function handle()
     {
+        echo date('Y-m-d H:i:s')."\t Initiating Laravel App \r\n";
         $this->logs->write("Initiating App");
         $error_status = false;
 
@@ -34,6 +35,7 @@ class InitiateApp extends Command
         $web_roles = ['superadmin', 'admin', 'basic_user'];
         $superadmin_id = '';
         foreach($web_roles as $role) {
+            echo date('Y-m-d H:i:s')."\t Create role: $role \r\n";
             try {
                 $web_role = WebRole::create([
                     'name'  => $role,
@@ -46,9 +48,11 @@ class InitiateApp extends Command
         }
 
         try {
+            echo date('Y-m-d H:i:s')."\t Create user: superadmin \r\n";
             // Artisan::call('db:seed', ['--class' => 'UsersTableSeeder']);
-            $superadmin = User::create([
+            $superadmin = User::updateOrCreate([
                 'email'         => 'superadmin@mail.com',
+            ], [
                 'username'      => 'superadmin',
                 'password'      => Hash::make('....'),
                 'web_role_id'   => $superadmin_id,
@@ -58,9 +62,11 @@ class InitiateApp extends Command
         }
 
         if($error_status) {
+            echo date('Y-m-d H:i:s')."\t Initiating process error, rollback \r\n";
             $this->logs->write("Initiating process error, rollback");
             DB::rollBack();
         } else {
+            echo date('Y-m-d H:i:s')."\t Process complete \r\n";
             DB::commit();
         }
     }

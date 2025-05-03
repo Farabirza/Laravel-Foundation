@@ -28,25 +28,33 @@ class AjaxAccountController extends AjaxController
         if(!$request->has('action')) return response()->json('Request not valid', 400);
         switch($request->action) {
             case 'update-account':
-                // print_r($request->all());exit();
-                $validator = Validator::make($request->all(), [
-                    'username' => ['required', 'max:50', 'unique:users,username,'.auth()->user()->id],
-                    'password' => [
-                        $request->password == '' ? '' : 'min:6', $request->password == '' ? '' : 'confirmed'
-                    ]
-                ], [
-                    'username.required' => 'Username cannot be empty',
-                    'username.unique' => 'Username already used',
-                    'password.min' => 'Password requires at least 6 characters',
-                    'password.confirmed' => "Password confirmation doesn't match",
-                ]);
-                if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
-
-                User::where('id', auth()->user()->id)->update([
-                    'username' => $request->username,
-                ]);
-
-                if($request->password != '') {
+                // Username
+                if($request->has('username') && $request->username != '' && $request->username != auth()->user()->username) {
+                    $validator = Validator::make($request->all(), [
+                        'username' => ['required', 'max:50', 'unique:users,username,'.auth()->user()->id],
+                    ], [
+                        'username.required' => 'Username cannot be empty',
+                        'username.unique' => 'Username already used',
+                    ]);
+                    if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
+    
+                    User::where('id', auth()->user()->id)->update([
+                        'username' => $request->username,
+                    ]);
+                }
+                
+                // Password
+                if($request->has('password') && $request->password != '') {
+                    $validator = Validator::make($request->all(), [
+                        'password' => [
+                            $request->password == '' ? '' : 'min:6', $request->password == '' ? '' : 'confirmed'
+                        ]
+                    ], [
+                        'password.min' => 'Password requires at least 6 characters',
+                        'password.confirmed' => "Password confirmation doesn't match",
+                    ]);
+                    if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
+    
                     User::where('id', auth()->user()->id)->update([
                         'password' => Hash::make($request->password),
                     ]);

@@ -35,7 +35,8 @@ Route::group([
 
 // Account
 Route::group([
-    'prefix' => 'account'
+    'prefix' => 'account',
+    'middleware' => 'auth',
     ], function () {
     Route::get('/profile', [AccountController::class, 'profile'])->name('account.profile');
 });

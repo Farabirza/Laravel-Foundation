@@ -5,11 +5,11 @@
 @include('components.meta')
 
 <!-- Library CSS style start-->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> <!-- Bootstrap 5.3.3 -->
+<link href="{{ asset('/vendor/bootstrap/css/bootstrap-5.3.3.min.css') }}"  rel="stylesheet"> <!-- Bootstrap 5.3.3 -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> <!-- Boxicons -->
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> <!-- Animate on scroll -->
-<link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet"> <!-- toastr -->
+<link href="{{ asset('/vendor/aos/aos-2.3.1.min.css') }}"  rel="stylesheet"> <!-- Animate on scroll -->
+<link href="{{ asset('/vendor/glightbox/glightbox.min.css') }}"  rel="stylesheet">
+<link href="{{ asset('/vendor/toastr/toastr-2.1.3.css') }}"  rel="stylesheet"> <!-- toastr -->
 <!-- Library CSS style end -->
 
 <!-- Main CSS File -->
@@ -220,14 +220,14 @@ a:hover { color: inherit }
 <!-- modal notification end -->
 
 <!-- Library JS script start -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script> <!-- jQuery 3.7.1 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>  <!-- Bootstrap 5.3.3 -->
-<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script> <!-- Boxicons -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Axios -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Sweetalert 2 -->
+<script src="{{ asset('/vendor/jquery/jquery-3.7.1.min.js') }}"></script> <!-- jQuery 3.7.1 -->
+<script src="{{ asset('/vendor/bootstrap/js/bootstrap-5.3.3.bundle.min.js') }}"></script>  <!-- Bootstrap 5.3.3 -->
+<script src="{{ asset('/vendor/boxicons/boxicons-2.1.4.js') }}"></script> <!-- Boxicons -->
+<script src="{{ asset('/vendor/axios/axios-1.9.0.js') }}"></script> <!-- Axios -->
+<script src="{{ asset('/vendor/sweetalert2/sweetalert2-11-20-0.all.min.js') }}"></script> <!-- Sweetalert 2 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> <!-- Toastr -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script> <!-- Animate on scroll -->
-<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script> <!-- Glightbox -->
+<script src="{{ asset('/vendor/aos/aos-2.3.1.min.js') }}"></script> <!-- Animate on scroll -->
+<script src="{{ asset('/vendor/glightbox/glightbox.min.js') }}"></script> <!-- Glightbox -->
 <!-- Library JS script end -->
 
 <!-- JS Files -->
