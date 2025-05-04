@@ -228,6 +228,7 @@ a:hover { color: inherit }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> <!-- Toastr -->
 <script src="{{ asset('/vendor/aos/aos-2.3.1.min.js') }}"></script> <!-- Animate on scroll -->
 <script src="{{ asset('/vendor/glightbox/glightbox.min.js') }}"></script> <!-- Glightbox -->
+<script src="{{ asset('/vendor/chartjs/chartjs-4.3.3.min.js') }}"></script> <!-- Chartjs -->
 <!-- Library JS script end -->
 
 <!-- JS Files -->

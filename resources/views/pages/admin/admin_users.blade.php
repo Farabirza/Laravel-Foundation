@@ -51,6 +51,28 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Chartjs start --}}
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <canvas id="chart-user-regis"></canvas>
+                    <div class="mt-2">
+                        <form id="form-chart-user-regis" action="">
+                        <div class="center gap-3">
+                            <select id="chart-user-regis-type" class="form-select form-select-sm max-w-120px" onchange="changePeriodeType('chart-user-regis')" autocomplete="false">
+                                <option value="year">Year</option>
+                                <option value="month">Month</option>
+                            </select>
+                            <div id="chart-user-regis-periode" class="col"></div>
+                            <button class="btn btn-sm btn-primary center gap-2 max-w-120px" type="submit"><i class="bx bx-chart"></i>Generate</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{-- Chartjs end --}}
+
+            {{-- Datatable start --}}
             <div class="row mt-4">
                 <div class="col-md-12">
                     <table id="table-users" class="table font-9em">
@@ -144,6 +166,82 @@
 @push('scripts')
 <script src="{{ asset('/vendor/datatables/datatables.min.js') }}"></script>
 <script type="text/javascript">
+
+// ---------- Chartjs start ---------- //
+const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const curr_date = new Date();
+const curr_year = curr_date.getFullYear();
+const ctxUserRegis = document.getElementById('chart-user-regis');
+const chartUserRegis = new Chart(ctxUserRegis, {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+        label: 'User Registration',
+        data: [],
+        fill: true,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+    }]
+  },
+  options: {
+    responsive: true
+  }
+});
+function changePeriodeType(id) {
+    let $container = $('#'+ id +'-periode');
+    let $type = $('#'+ id +'-type');
+    let type = $type.val();
+    let el = '';
+    $container.html('');
+    switch(type) {
+        case 'year':
+            el += '<select name="periode" class="form-select form-select-sm col">';
+            for(let i = curr_year; i >= 1970; i--) el += `<option value="${i}">${i}</option>`;
+            el += '</select>';
+            $container.html(el);
+        break;
+        case 'month':
+            el += '<div class="center gap-3"><select name="periode[0]" class="form-select form-select-sm col">';
+            for(let i = curr_year; i >= 1970; i--) el += `<option value="${i}">${i}</option>`;
+            el += '</select><select name="periode[1]" class="form-select form-select-sm col">';
+            for(let i = 11; i >= 0; i--) el += `<option value="${i + 1}">${months[i]}</option>`;
+            el += '</select></div>';
+            $container.html(el);
+        break;
+    }
+}
+$('#form-chart-user-regis').on('submit', function(e) {
+    e.preventDefault();
+    let type = $('#chart-user-regis-type').val();
+    let periode = new Date();
+    switch(type) {
+        case 'year':
+            periode = $("select[name='periode']").find(":selected").val();
+        break;
+        case 'month':
+            let periode1 = $("select[name='periode[0]']").find(":selected").val();
+            let periode2 = $("select[name='periode[1]']").find(":selected").val();
+            periode = periode1 + '-' + (periode2 < 10 ? '0' + periode2 : periode2);
+        break;
+    }
+    updateChart(periode);
+});
+function updateChart(periode) {
+    axios.post(domain + '/ajax/admin', {
+        action: 'chart-users-regis', periode: periode
+    })
+    .then(res => {
+        chartUserRegis.data.labels = res.data.labels;
+        chartUserRegis.data.datasets[0].data = res.data.data;
+        chartUserRegis.update();
+    })
+    .catch(err => {
+        errorMessage('Update chart failed');
+    });
+}
+// ---------- Chartjs end ---------- //
+
 const toggleDetail = (index) => {
     let toggle = $('#toggle-detail-'+index);
     let isShown = toggle.attr('data-shown');
@@ -185,6 +283,9 @@ $(document).ready(function() {
     $('#link-dashboard-admin').css({'font-weight': 600, 'color': '#ddd'});
     $('#submenu-admin').addClass('show');
     $('#link-dashboard-admin-users').css({'font-weight': 500, 'color': '#ddd'});
+
+    changePeriodeType('chart-user-regis');
+    updateChart(curr_year);
 });
 </script>
 @endpush

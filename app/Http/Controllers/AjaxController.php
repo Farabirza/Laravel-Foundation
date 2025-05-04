@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use getID3;
+use DB;
 
 abstract class AjaxController
 {
@@ -76,5 +77,15 @@ abstract class AjaxController
             'publisher' => $publisher,
             'year' => $year,
         ];
+    }
+
+    public function queryLog($logs)
+    {
+        $queryLog = DB::getQueryLog(); 
+        $query = end($queryLog);
+        $sql = $query['query'];
+        $bindings = $query['bindings'];
+        $finalQuery = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+        $logs->write("\r\n".$finalQuery."\r\n");
     }
 }
