@@ -16,7 +16,7 @@
 <div id="content-wrapper">
     {{-- Breadcrumb start --}}
     <div class="center-between between mb-3">
-        <h5>Users Controller</h5>
+        <h5 class="fw-semibold">Users Controller</h5>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb font-8em">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -55,7 +55,10 @@
             {{-- Chartjs start --}}
             <div class="row mt-4">
                 <div class="col-md-8">
-                    <canvas id="chart-user-regis"></canvas>
+                    <div class='center-between'>
+                        <h5>User Registration Chart</h5>
+                    </div>
+                    <canvas id="chart-user-regis" class="mt-2"></canvas>
                     <div class="mt-2">
                         <form id="form-chart-user-regis" action="">
                         <div class="center gap-3">
@@ -67,6 +70,22 @@
                             <button class="btn btn-sm btn-primary center gap-2 max-w-120px" type="submit"><i class="bx bx-chart"></i>Generate</button>
                         </div>
                         </form>
+                    </div>
+                </div>
+
+                {{-- Activity Logs --}}
+                <div class="col-md-4">
+                    <div class='center-between'>
+                        <h5>Activity Logs</h5>
+                    </div>
+                    <div class="mt-3">
+                        <textarea id="activity-logs-container" class="form-control form-control-sm h-320px"></textarea>
+                    </div>
+                    <div class="mt-2 center-between">
+                        <div class="spinner-container">
+                            <div id="activity-logs-spinner" class="spinner spinner-sm d-none"></div>
+                        </div>
+                        <button class="btn btn-primary btn-sm center gap-2" onclick="loadAcitivyLogs()"><i class="bx bx-file"></i>Load logs</button>
                     </div>
                 </div>
             </div>
@@ -163,11 +182,16 @@
 <!-- Modal user detail End -->
 @endsection
 
+@php
+$first_register = App\Models\User::orderBy('created_at')->first()->created_at;
+@endphp
+
 @push('scripts')
 <script src="{{ asset('/vendor/datatables/datatables.min.js') }}"></script>
 <script type="text/javascript">
 
 // ---------- Chartjs start ---------- //
+const first_register = "{{ explode('-', $first_register)[0] }}";
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const curr_date = new Date();
 const curr_year = curr_date.getFullYear();
@@ -197,13 +221,13 @@ function changePeriodeType(id) {
     switch(type) {
         case 'year':
             el += '<select name="periode" class="form-select form-select-sm col">';
-            for(let i = curr_year; i >= 1970; i--) el += `<option value="${i}">${i}</option>`;
+            for(let i = curr_year; i >= first_register; i--) el += `<option value="${i}">${i}</option>`;
             el += '</select>';
             $container.html(el);
         break;
         case 'month':
             el += '<div class="center gap-3"><select name="periode[0]" class="form-select form-select-sm col">';
-            for(let i = curr_year; i >= 1970; i--) el += `<option value="${i}">${i}</option>`;
+            for(let i = curr_year; i >= first_register; i--) el += `<option value="${i}">${i}</option>`;
             el += '</select><select name="periode[1]" class="form-select form-select-sm col">';
             for(let i = 11; i >= 0; i--) el += `<option value="${i + 1}">${months[i]}</option>`;
             el += '</select></div>';
@@ -272,8 +296,25 @@ function userDetail(user_id) {
         $modal.modal('show');
     })
     .catch((err) => {
-        //
+        errorMessage('Unable to retrieve user data');
     });
+}
+
+function loadAcitivyLogs() {
+    let $container = $('#activity-logs-container');
+    let $spinner = $('#activity-logs-spinner');
+    $spinner.removeClass('d-none');
+    axios.post('/ajax/admin', {
+        action: 'get-activity-logs'
+    })
+    .then(res => {
+        $spinner.addClass('d-none');
+        $container.val(res.data);
+    })
+    .catch(err => {
+        $spinner.addClass('d-none');
+        errorMessage('Load activity logs failed');
+    })
 }
 
 $(document).ready(function() {

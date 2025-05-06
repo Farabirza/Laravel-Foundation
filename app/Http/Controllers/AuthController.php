@@ -10,11 +10,12 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-    protected $logs;
+    protected $logs, $activity_logs;
 
     public function __construct()
     {
-        $this->logs = new Logs(class_basename("AuthController"));
+        $this->logs = new Logs("AuthController");
+        $this->activity_logs = new Logs('Activity');
     }
 
     public function login(Request $request)
@@ -36,6 +37,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = auth()->user();
+        $this->activity_logs->write("'{$user->email}' log out");
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -57,6 +60,8 @@ class AuthController extends Controller
                 if($access[0] == false) return redirect('/')->with('error', $access[1]);
 
                 Auth::login($user);
+                
+                $this->activity_logs->write("'{$user->email}' log in with Google");
                 return redirect()->intended('/');
             } else {
                 if(!$user_by_email = User::where('email', $google->email)->first()) {
@@ -89,6 +94,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->google_email),
             'email_verified_at' => date('Y-m-d H:i:s', time()),
         ]);
+        $this->activity_logs->write("'{$request->google_email}' register with Google");
         Auth::login($create);
         return redirect()->intended('/');
     }

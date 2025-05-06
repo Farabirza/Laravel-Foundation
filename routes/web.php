@@ -28,7 +28,8 @@ Route::post('auth/google/register', [AuthController::class, 'google_register']);
 
 // Admin Panel
 Route::group([
-    'prefix' => 'admin'
+    'prefix' => 'admin',
+    'middleware' => 'auth',
     ], function () {
     Route::get('/users', [AdminController::class, 'users_controller'])->name('admin.users');
 });

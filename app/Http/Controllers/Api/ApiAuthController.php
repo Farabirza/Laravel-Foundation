@@ -15,11 +15,12 @@ use App\Http\Requests\RegisterRequest;
 
 class ApiAuthController extends Controller
 {
-    protected $logs;
+    protected $logs, $activity_logs;
 
     public function __construct()
     {
         $this->logs = new Logs('ApiAuthController');
+        $this->activity_logs = new Logs('Activity');
     }
 
     public function users()
@@ -49,7 +50,10 @@ class ApiAuthController extends Controller
                 'message' => 'Registration failed!',
             ], 400);
         }
-        $this->logs->write("New user has registered! \r\n Username \t : {$username} \r\n Email \t\t : {$request->email}");
+
+        $message = "New user has registered! \r\n Username \t : {$username} \r\n Email \t\t : {$request->email}";
+        $this->logs->write($message);
+        $this->activity_logs->write($message);
         return response()->json([
             'message' => 'You have registered successfully!',
             'token' => $token,
@@ -89,11 +93,13 @@ class ApiAuthController extends Controller
             'email' => $user->email, 'password' => $request->password
         ], $request->remember)) {
             $token = $user->createToken('token')->plainTextToken;
+            $this->activity_logs->write("'{$user->email}' log in");
             return response()->json([
                 'message' => 'Welcome back '.$user->username,
                 'token' => $token,
             ], 200);
         } else {
+            $this->activity_logs->write("User attempted to log in with email '{$user->email}' failed");
             return response()->json([
                 'message' => "Invalid credentials"
             ], 400);
@@ -103,6 +109,8 @@ class ApiAuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
+        $user = auth()->user();
+        $this->activity_logs->write("'{$user->email}' log out");
         return response()->json([
             'message' => 'Loged out'
         ], 200);

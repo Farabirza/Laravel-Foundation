@@ -14,11 +14,12 @@ use Illuminate\Support\Facades\Validator;
 
 class AjaxAccountController extends AjaxController
 {
-    protected $logs;
+    protected $logs, $activity_logs;
 
     public function __construct()
     {
         $this->logs = new Logs('AjaxAccountController');
+        $this->activity_logs = new Logs('Activity');
     }
 
     public function action(Request $request)
@@ -28,7 +29,10 @@ class AjaxAccountController extends AjaxController
         if(!$request->has('action')) return response()->json('Request not valid', 400);
         switch($request->action) {
             case 'update-account':
+                $user = auth()->user();
+                
                 // Username
+                $old_username = $user->username;
                 if($request->has('username') && $request->username != '' && $request->username != auth()->user()->username) {
                     $validator = Validator::make($request->all(), [
                         'username' => ['required', 'max:50', 'unique:users,username,'.auth()->user()->id],
@@ -41,6 +45,7 @@ class AjaxAccountController extends AjaxController
                     User::where('id', auth()->user()->id)->update([
                         'username' => $request->username,
                     ]);
+                    $this->activity_logs->write("'{$user->email}' username updated from '{$old_username}' to '{$request->username}'");
                 }
                 
                 // Password
@@ -58,6 +63,7 @@ class AjaxAccountController extends AjaxController
                     User::where('id', auth()->user()->id)->update([
                         'password' => Hash::make($request->password),
                     ]);
+                    $this->activity_logs->write("'{$user->email}' password updated");
                 }
 
                 // Process user picture
@@ -71,6 +77,7 @@ class AjaxAccountController extends AjaxController
                             User::find(auth()->user()->id)->update([
                                 'picture' => $storeImage[2]
                             ]);
+                            $this->activity_logs->write("'{$user->email}' profile picture updated");
                         }
                     } catch(\Exception $e) {
                         $this->logs->write($e->getMessage());
@@ -84,6 +91,7 @@ class AjaxAccountController extends AjaxController
             break;
 
             case 'save-profile':
+                $user = auth()->user();
                 $validator = Validator::make($request->all(), [
                     'full_name' => ['required', 'max:50'],
                 ], [
@@ -103,6 +111,7 @@ class AjaxAccountController extends AjaxController
                     'phone_code'        => $request->phone_number == '' ? '' : $request->phone_code,
                     'phone_number'      => $request->phone_number,
                 ]);
+                $this->activity_logs->write("'{$user->email}' account data updated");
                 DB::commit();
 
                 return response()->json([

@@ -91,6 +91,13 @@ class AjaxAdminController extends AjaxController
                 ], 200);
             break;
 
+            case 'get-activity-logs':
+                $activity_logs = file_exists(storage_path('logs/20250505_Activity.log'))
+                    ? file_get_contents(storage_path('logs/20250505_Activity.log'))
+                    : 'Log file not found.';
+                return response()->json($activity_logs, 200);
+            break;
+
             default:
                 return response()->json([
                     'Action not valid'
