@@ -146,7 +146,6 @@
     {{-- Content end --}}
 </div>
 
-
 <!-- Modal user detail Start -->
 <div class="modal fade" id="modal-user-detail" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-md" role="document">
@@ -173,7 +172,49 @@
                             <p class="user-detail-created_at"></p>
                         </div>
                     </div>
-                    <div class="col-md-12"></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <p class="text-secondary font-8em">Web role</p>
+                        <p class="user-detail-web_role font-9em"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-secondary font-8em">Last login</p>
+                        <p class="user-detail-last_login font-9em"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-secondary font-8em">Status</p>
+                        <p class="user-detail-status font-9em"></p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <p class="text-secondary font-8em">Full name</p>
+                        <p class="user-detail-full_name font-9em"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-secondary font-8em">Gender</p>
+                        <p class="user-detail-gender font-9em"></p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <p class="text-secondary font-8em">Address</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="center-start flex-wrap gap-2 font-9em">
+                            <span class="user-detail-address_street"></span>
+                            <span class="user-detail-address_city"></span>
+                            <span class="user-detail-address_country"></span>
+                            <span class="user-detail-zip_code"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <p class="text-secondary font-8em">Contact</p>
+                        <p class="user-detail-phone font-9em"></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,11 +333,31 @@ function userDetail(user_id) {
             $('.user-detail-username').html(res.data[0].username);
             $('.user-detail-email').html(res.data[0].email);
             $('.user-detail-created_at').html(res.data[0].created_date);
+            $('.user-detail-web_role').html(res.data[0].web_role.name);
+            $('.user-detail-status').html(res.data[0].status);
+            $('.user-detail-last_login').html(res.data[0].last_login);
+            if(res.data[0].profile) {
+                $('.user-detail-full_name').html(res.data[0].profile.full_name);
+                $('.user-detail-gender').html(res.data[0].profile.gender);
+                $('.user-detail-address_street').html(res.data[0].profile.address_street);
+                $('.user-detail-address_city').html(res.data[0].profile.address_city);
+                $('.user-detail-address_country').html(res.data[0].profile.address_country);
+                $('.user-detail-zip_code').html(res.data[0].profile.zip_code);
+                $('.user-detail-phone').html(res.data[0].profile.phone_code + ' ' + res.data[0].profile.phone_number);
+            } else {
+                $('.user-detail-full_name').html('-');
+                $('.user-detail-gender').html('-');
+                $('.user-detail-address_street').html('-');
+                $('.user-detail-address_city').html('');
+                $('.user-detail-address_country').html('');
+                $('.user-detail-zip_code').html('');
+                $('.user-detail-phone').html(' - ');
+            }
         }
         $modal.modal('show');
     })
     .catch((err) => {
-        errorMessage('Unable to retrieve user data');
+        //
     });
 }
 

@@ -93,6 +93,7 @@ class ApiAuthController extends Controller
             'email' => $user->email, 'password' => $request->password
         ], $request->remember)) {
             $token = $user->createToken('token')->plainTextToken;
+            $user_query->update([ 'last_login' => now() ]);
             $this->activity_logs->write("'{$user->email}' log in");
             return response()->json([
                 'message' => 'Welcome back '.$user->username,

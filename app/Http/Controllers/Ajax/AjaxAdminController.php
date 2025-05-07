@@ -29,7 +29,7 @@ class AjaxAdminController extends AjaxController
         if(!$request->has('action')) return response()->json('Request not valid', 400);
         switch($request->action) {
             case 'user_detail':
-                $user = User::with('web_role')->find($request->user_id);
+                $user = User::with('profile')->with('web_role')->find($request->user_id);
                 return response()->json([
                     $user
                 ], 200);
@@ -38,7 +38,7 @@ class AjaxAdminController extends AjaxController
             case 'chart-users-regis':
                 $exp_periode = explode('-', $request->periode);
                 $type = count($exp_periode);
-                
+
                 // Get users data
                 $users = DB::table('users')
                     ->when($exp_periode, function(Builder $query) use ($exp_periode, $type) {
