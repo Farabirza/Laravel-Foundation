@@ -48,7 +48,7 @@ Route::group([
     ], function () {
     Route::post('/account', [AjaxAccountController::class, 'action']);
     Route::post('/auth', [AjaxAuthController::class, 'action']);
-    Route::post('/admin', [AjaxAdminController::class, 'action']);
+    Route::post('/admin', [AjaxAdminController::class, 'action'])->name('ajax.admin');
 });
 
 // Route::get('/test', function() {

@@ -31,6 +31,9 @@
     <section>
         <div class="container">
             <div class="row">
+                <div class='center-between mb-3'>
+                    <h5>Summary</h5>
+                </div>
                 <div class="col-md-12 flex-between gap-3 p-0">
                     <div class="col">
                         <div class="border border-1 rounded p-3">
@@ -53,7 +56,7 @@
             </div>
 
             {{-- Chartjs start --}}
-            <div class="row mt-4">
+            <div class="row mt-5">
                 <div class="col-md-8">
                     <div class='center-between'>
                         <h5>User Registration Chart</h5>
@@ -81,18 +84,27 @@
                     <div class="mt-3">
                         <textarea id="activity-logs-container" class="form-control form-control-sm h-320px"></textarea>
                     </div>
+                    <div class="mt-2">
+                        <input type="date" id="date-act-logs" value="{{ date('Y-m-d') }}" class="form-control form-control-sm">
+                    </div>
                     <div class="mt-2 center-between">
                         <div class="spinner-container">
                             <div id="activity-logs-spinner" class="spinner spinner-sm d-none"></div>
                         </div>
-                        <button class="btn btn-primary btn-sm center gap-2" onclick="loadAcitivyLogs()"><i class="bx bx-file"></i>Load logs</button>
+                        <div class="center-end gap-2">
+                            <button class="btn btn-primary btn-sm center gap-2 font-7em" onclick="downloadAcitivyLogs()"><i class="bx bx-download"></i>Download</button>
+                            <button class="btn btn-primary btn-sm center gap-2 font-7em" onclick="loadAcitivyLogs()"><i class="bx bx-loader-alt"></i>Load logs</button>
+                        </div>
                     </div>
                 </div>
             </div>
             {{-- Chartjs end --}}
 
             {{-- Datatable start --}}
-            <div class="row mt-4">
+            <div class="row mt-5">
+                <div class='center-between mb-3'>
+                    <h5>List Of Users</h5>
+                </div>
                 <div class="col-md-12">
                     <table id="table-users" class="table font-9em">
                         <thead>
@@ -361,12 +373,14 @@ function userDetail(user_id) {
     });
 }
 
+// ---------- Activity Logs Start ---------- //
+$dateActLogs = $('#date-act-logs');
 function loadAcitivyLogs() {
     let $container = $('#activity-logs-container');
     let $spinner = $('#activity-logs-spinner');
     $spinner.removeClass('d-none');
     axios.post('/ajax/admin', {
-        action: 'get-activity-logs'
+        action: 'get-activity-logs', date: $dateActLogs.val()
     })
     .then(res => {
         $spinner.addClass('d-none');
@@ -377,6 +391,30 @@ function loadAcitivyLogs() {
         errorMessage('Load activity logs failed');
     })
 }
+function downloadAcitivyLogs() {
+    let date = $dateActLogs.val();
+    let formatted = date.replace(/-/g, '');
+    let filename = formatted + '_Activity.log';
+    axios({
+        method: 'post',
+        url: '/ajax/admin',
+        data: {
+            action: 'download-activity-logs', date: date
+        },
+        responseType: 'blob',
+    }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }).catch(err => {
+        errorMessage("Log file not found");
+    });
+}
+// ---------- Activity Logs End ---------- //
 
 $(document).ready(function() {
     $('#table-users').DataTable({

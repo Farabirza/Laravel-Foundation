@@ -30,10 +30,9 @@ class AjaxAdminController extends AjaxController
         switch($request->action) {
             case 'user_detail':
                 $user = User::with('profile')->with('web_role')->find($request->user_id);
-                return response()->json([
-                    $user
-                ], 200);
-            break;
+            return response()->json([
+                $user
+            ], 200);
 
             case 'chart-users-regis':
                 $exp_periode = explode('-', $request->periode);
@@ -86,23 +85,34 @@ class AjaxAdminController extends AjaxController
                     }
                 }
 
-                return response()->json([
-                    'labels' => $labels, 'data' => $data
-                ], 200);
-            break;
+            return response()->json([
+                'labels' => $labels, 'data' => $data
+            ], 200);
 
             case 'get-activity-logs':
-                $activity_logs = file_exists(storage_path('logs/20250505_Activity.log'))
-                    ? file_get_contents(storage_path('logs/20250505_Activity.log'))
+                $date = date('Ymd');
+                if($request->has('date')) $date = Carbon::parse($request->date)->format('Ymd');
+                $activity_logs = file_exists(storage_path("logs/{$date}_Activity.log"))
+                    ? file_get_contents(storage_path("logs/{$date}_Activity.log"))
                     : 'Log file not found.';
-                return response()->json($activity_logs, 200);
-            break;
+            return response()->json($activity_logs, 200);
+
+            case 'download-activity-logs':
+                $date = date('Ymd');
+                if($request->has('date')) $date = Carbon::parse($request->date)->format('Ymd');
+                $filename = "{$date}_Activity.log";
+                $filePath = storage_path("logs/".$filename);
+                if(file_exists($filePath)) {
+                    return response()->download($filePath, $filename, [
+                        'Content-Type' => 'text/plain',
+                    ]);
+                }
+            return response()->json('File not found', 402);
 
             default:
-                return response()->json([
-                    'Action not valid'
-                ], 400);
-            break;
+            return response()->json([
+                'Action not valid'
+            ], 400);
         }
     }
 }
