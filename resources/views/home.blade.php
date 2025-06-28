@@ -15,7 +15,7 @@
     <section>
         <div class="container">
             <div class="w-100 center-between gap-3 mb-4">
-                <h3 class="page-title">Title</h3>
+                <h3 class="page-title">Welcome, {{ auth()->user()->full_name }}</h3>
                 <div class="input-group max-w-320px">
                     <input type="text" name="search" class="form-control form-control-sm">
                     <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class='bx bx-search' ></i></button>

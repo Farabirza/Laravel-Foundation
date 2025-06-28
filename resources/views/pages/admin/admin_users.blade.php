@@ -14,8 +14,8 @@
 
 <div id="content-wrapper">
     {{-- Breadcrumb start --}}
-    <div class="center-between between mb-3">
-        <h5 class="fw-semibold">Users Controller</h5>
+    <div class="container center-between mb-4">
+        <h5 class="page-title">Users Controller</h5>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb font-8em">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -102,7 +102,7 @@
             {{-- Datatable start --}}
             <div class="row mt-5">
                 <div class='center-between mb-3'>
-                    <h5>List Of Users</h5>
+                    <h5>List of Users</h5>
                 </div>
                 <div class="col-md-12">
                     <table id="table-users" class="table font-9em">
