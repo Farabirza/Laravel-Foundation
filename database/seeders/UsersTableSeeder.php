@@ -35,7 +35,7 @@ class UsersTableSeeder extends Seeder
                 'id'            => \Str::uuid()->toString(),
                 'seq'           => $last_seq,
                 'email'         => fake()->email,
-                'username'      => fake()->username,
+                'full_name'     => fake()->username,
                 'password'      => Hash::make('password'),
                 'web_role_id'   => $role_id,
                 'created_at'    => $this->genRandDateTime(),
@@ -47,15 +47,15 @@ class UsersTableSeeder extends Seeder
         }
         if (!empty($users)) User::insert($users);
     }
-    
+
     public function genRandDateTime(): DateTime
     {
         $start = strtotime('2020-01-01 00:00:00');
         $end = time();
-    
+
         // Generate random timestamp between start and end
         $randomTimestamp = mt_rand($start, $end);
-    
+
         return (new DateTime())->setTimestamp($randomTimestamp);
     }
 }

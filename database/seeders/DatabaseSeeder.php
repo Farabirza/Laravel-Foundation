@@ -1,35 +1,22 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Database\Seeders;
 
 use App\Models\User;
-use App\Services\Logs;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\WebRole;
-use Illuminate\Console\Command;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Artisan;
 
-class InitiateApp extends Command
+class DatabaseSeeder extends Seeder
 {
     protected $logs;
 
-    protected $signature = 'command:initiate';
-
-    protected $description = 'Command description';
-
-    public function __construct()
+    public function run(): void
     {
-        parent::__construct();
-        $this->logs = new Logs('InitiateApp');
-    }
-
-    public function handle()
-    {
-        echo date('Y-m-d H:i:s')."\t Initiating Laravel App \r\n";
-        $this->logs->write("Initiating App");
         $error_status = false;
-
         DB::beginTransaction();
 
         $web_roles = ['superadmin', 'admin', 'basic_user'];
@@ -49,11 +36,10 @@ class InitiateApp extends Command
 
         try {
             echo date('Y-m-d H:i:s')."\t Create user: superadmin \r\n";
-            // Artisan::call('db:seed', ['--class' => 'UsersTableSeeder']);
             $superadmin = User::updateOrCreate([
                 'email'         => 'superadmin@mail.com',
             ], [
-                'username'      => 'superadmin',
+                'full_name'     => 'superadmin',
                 'password'      => Hash::make('....'),
                 'web_role_id'   => $superadmin_id,
             ]);
@@ -69,5 +55,8 @@ class InitiateApp extends Command
             echo date('Y-m-d H:i:s')."\t Process complete \r\n";
             DB::commit();
         }
+
+        $this->call([
+        ]);
     }
 }

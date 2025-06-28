@@ -14,7 +14,6 @@ return new class extends Migration
             $table->bigInteger('seq')->unsigned();
 
             $table->string('picture')->nullable();
-            $table->string('username', 24)->nullable();
             $table->string('email', 100)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
@@ -27,6 +26,16 @@ return new class extends Migration
             $table->dateTime('otp_exp')->nullable();
             $table->string('status', 24)->default('active');
             $table->string('status_reason')->nullable();
+
+            // User Profile
+            $table->string('full_name', 50)->nullable()->default('');
+            $table->string('gender', 6)->nullable()->default('');
+            $table->string('address_country', 50)->nullable()->default('');
+            $table->string('address_city', 50)->nullable()->default('');
+            $table->string('address_street', 50)->nullable()->default('');
+            $table->string('zip_code', 5)->nullable()->default('');
+            $table->string('phone_code', 24)->nullable()->default('');
+            $table->string('phone_number', 24)->nullable()->default('');
 
             $table->rememberToken();
             $table->timestamps();

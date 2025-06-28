@@ -67,9 +67,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(WebRole::class, 'web_role_id');
     }
-
-    public function profile()
-    {
-        return $this->hasOne(Profile::class, 'user_id');
-    }
 }

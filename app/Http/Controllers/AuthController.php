@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\Logs;
+use App\Models\WebRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -20,7 +21,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $query = User::where('username', $request->email)->orWhere('email', $request->email);
+        $query = User::where('email', $request->email);
         if($user = $query->first()) {
             if(Auth::attempt([
                 'email' => $user->email, 'password' => $request->password
@@ -60,15 +61,23 @@ class AuthController extends Controller
                 if($access[0] == false) return redirect('/')->with('error', $access[1]);
 
                 Auth::login($user);
-                
+
                 $this->activity_logs->write("'{$user->email}' log in with Google");
                 return redirect()->intended('/');
             } else {
-                if(!$user_by_email = User::where('email', $google->email)->first()) {
-                    return view('auth.create_username', [
-                        'metaTags' => $this->metaTags,
-                        'title' => 'Laravel Foundation',
-                        'user' => $google,
+                // If user already registered, retrieve user data. Otherwise, register
+                $user_by_email = User::where('email', $google->email)->first();
+                if(!$user_by_email) {
+                    $username = explode('@', $google->email)[0];
+                    $web_role_id = WebRole::where('name', 'basic_user')->first()->id;
+                    $user_by_email = User::create([
+                        'full_name'         => $username,
+                        'email'             => $google->email,
+                        'google_id'         => $google->id,
+                        'password'          => bcrypt($google->email),
+                        'email_verified_at' => date('Y-m-d H:i:s', time()),
+                        'web_role_id'       => $web_role_id,
+                        'status'            => 'active',
                     ]);
                 }
 
@@ -85,14 +94,14 @@ class AuthController extends Controller
     }
 
     public function google_register(Request $request) {
-        // $get_name = str_replace(' ', '', $google->name);
-        $username = $request->username;
+        $username = explode('@', $request->google_email)[0];
         $create = User::create([
-            'username' => $username,
-            'email' => $request->google_email,
-            'google_id' => $request->google_id,
-            'password' => bcrypt($request->google_email),
+            'full_name'         => $username,
+            'email'             => $request->google_email,
+            'google_id'         => $request->google_id,
+            'password'          => bcrypt($request->google_email),
             'email_verified_at' => date('Y-m-d H:i:s', time()),
+            'status'            => 'active',
         ]);
         $this->activity_logs->write("'{$request->google_email}' register with Google");
         Auth::login($create);

@@ -197,7 +197,7 @@ a:hover { color: inherit }
                 <img src="{{ auth()->user()->picture_url }}" alt="" class="max-h-30px border shadow-lg rounded-circle">
                 <div class="dropdown">
                     <span role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ auth()->user()->username != '' ? auth()->user()->username : auth()->user()->email }}
+                        {{ auth()->user()->full_name != '' ? auth()->user()->full_name : auth()->user()->email }}
                     </span>
                     <ul class="dropdown-menu font-8em">
                         <li><a class="dropdown-item center-start gap-2" href="/account/profile"><i class="bx bx-user"></i>My account</a></li>

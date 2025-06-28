@@ -35,14 +35,14 @@ class ApiAuthController extends Controller
         $this->validateError();
 
         $web_user_role = WebRole::where('name', 'basic_user')->first()->id;
-        $latestSeq = (User::max('seq') ?? 0) + 1;
-        $username = "User{$latestSeq}";
+        $username = explode('@', $request->email)[0];
 
         $user = User::create([
-            'username' => $username,
+            'full_name' => $username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'web_role_id' => $web_user_role,
+            'status' => 'active',
         ]);
         $token = $user->createToken('token')->plainTextToken;
         if(!$user) {
@@ -63,7 +63,7 @@ class ApiAuthController extends Controller
     public function login(LoginRequest $request)
     {
         $this->validateError();
-        $user_query = User::where('username', $request->email)->orWhere('email', $request->email);
+        $user_query = User::where('email', $request->email);
         $user = $user_query->first();
 
         if(!$user) return response()->json(['message' => 'Invalid credentials'], 400);
@@ -96,7 +96,7 @@ class ApiAuthController extends Controller
             $user_query->update([ 'last_login' => now() ]);
             $this->activity_logs->write("'{$user->email}' log in");
             return response()->json([
-                'message' => 'Welcome back '.$user->username,
+                'message' => 'Welcome back '.$user->full_name,
                 'token' => $token,
             ], 200);
         } else {

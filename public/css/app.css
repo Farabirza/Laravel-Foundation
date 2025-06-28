@@ -28,7 +28,12 @@ h1, h2, h3, h4, h5, p {
 
 /* ================= Bootstrap like custom template start ================= */
 
+.container { max-width: 1440px; }
+.page-title { font-weight: 600; color: #313a46; }
+.breadcrumb-item a:hover { color: #3ab3d6; }
 .alert { font-size: .8em; }
+#content-wrapper { padding: 1.5rem 2.25rem; }
+
 .btn { display: flex !important; align-items: center; justify-content: center; }
 .flex-start { display: flex !important; align-items: center; justify-content: start; }
 .flex-center { display: flex !important; align-items: center; justify-content: center; }
@@ -244,28 +249,6 @@ h1, h2, h3, h4, h5, p {
 .hover-shrink:hover { transform: scale(.8); }
 
 .loader { position: relative; width: 120px; display: none; }
-
-.page-title {
-    position: relative;
-    padding-bottom: 20px;
-}
-.page-title h1 {
-    color: #202020;
-    letter-spacing: 1px;
-    font-size: 32pt;
-    margin-bottom: 4px;
-}
-.page-title p { color: var(--bs-secondary); letter-spacing: 1px; font-size: 11pt; margin: 0; }
-.page-title::after {
-    content: "";
-    position: absolute;
-    display: block;
-    width: 70px;
-    height: 3px;
-    background: #e95344;
-    bottom: 0;
-    left: 0;
-}
 
 .img-grayscale { filter: grayscale(100%); }
 

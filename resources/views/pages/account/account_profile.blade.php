@@ -2,7 +2,6 @@
 
 @push('css-styles')
 <style>
-#content-wrapper { padding: 2.75rem 2.25rem; }
 .form-control-sm, .form-select-sm { font-size: .7rem; }
 .alert-danger { font-size: .7rem; padding: .5rem; margin-top: .5rem; }
 
@@ -36,8 +35,8 @@
 @section('content')
 
 <div id="content-wrapper">
-    <div class="center-between mb-3">
-        <h5>User Profile</h5>
+    <div class="container center-between mb-4">
+        <h5 class="page-title">User Profile</h5>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb font-8em">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -61,14 +60,12 @@
                             <img src="{{ auth()->user()->picture_url }}" alt="" class="account-picture-preview img-fluid">
                             <input type="file" name="picture" id="form-account-picture" accept="image/*" class="cropper-input d-none" data-cropper-type="basic" data-cropper-preview=".account-picture-preview" data-cropper-result=".form-account-base64">
                         </div>
-                        <div class="mt-4">
-                            <input type="text" name="username" placeholder="Username" class="form-control p-1 border-0 border-bottom shadow-none text-center" value="{{ $user->username }}" autocomplete="off">
-                            <p class="alert alert-danger d-none form-account-alert-username"></p>
-                        </div>
-                        <p class="text-secondary mt-2">{{ $user->email }}</p>
+                        <p class="fw-semibold mt-4">{{ $user->email }}</p>
+                        @if($user->web_role->name != 'basic_user')
                         <div class="center mt-3">
                             <div class="p-2 rounded text-light font-8em" style="background: #3ab6da">{{ $user->web_role->name }}</div>
                         </div>
+                        @endif
                         <div class="form-group mt-3">
                             <input type="password" name="password" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Password" autocomplete="off">
                             <input type="password" name="password_confirmation" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Confirm password" autocomplete="off">
@@ -89,15 +86,15 @@
                     <div class="form-group center gap-3 mt-3">
                         <div class="col">
                             <label class="form-label">Full name</label>
-                            <input type="text" name="full_name" value="{{ $profile->full_name }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Full name">
+                            <input type="text" name="full_name" value="{{ $user->full_name }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Full name">
                             <p class="alert alert-danger d-none form-profile-alert-full_name"></p>
                         </div>
                         <div class="min-w-120px">
                             <label class="form-label">Gender</label>
                             <select name="gender" class="form-select form-select-sm p-1 border-0 border-bottom shadow-none max-w-180px">
-                                <option value="" @if($profile->gender == '') selected @endif>Select</option>
-                                <option value="male" @if($profile->gender == 'male') selected @endif>Male</option>
-                                <option value="female" @if($profile->gender == 'female') selected @endif>Female</option>
+                                <option value="" @if($user->gender == '') selected @endif>Select</option>
+                                <option value="male" @if($user->gender == 'male') selected @endif>Male</option>
+                                <option value="female" @if($user->gender == 'female') selected @endif>Female</option>
                             </select>
                         </div>
                     </div>
@@ -105,19 +102,19 @@
                         <label class="form-label">Address</label>
                         <div class="row">
                             <div class="col-md-6">
-                                <input type="text" name="address_country" value="{{ $profile->address_country }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Country">
+                                <input type="text" name="address_country" value="{{ $user->address_country }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Country">
                                 <p class="alert alert-danger d-none form-profile-alert-address_country"></p>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" name="address_city" value="{{ $profile->address_city }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="City">
+                                <input type="text" name="address_city" value="{{ $user->address_city }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="City">
                                 <p class="alert alert-danger d-none form-profile-alert-address_city"></p>
                             </div>
                             <div class="col-md-10">
-                                <input type="text" name="address_street" value="{{ $profile->address_street }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Street">
+                                <input type="text" name="address_street" value="{{ $user->address_street }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none" placeholder="Street">
                                 <p class="alert alert-danger d-none form-profile-alert-address_street"></p>
                             </div>
                             <div class="col-md-2">
-                                <input type="text" name="zip_code" value="{{ $profile->zip_code }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none input-numeric-only input-limit" data-max="5" placeholder="ZIP">
+                                <input type="text" name="zip_code" value="{{ $user->zip_code }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none input-numeric-only input-limit" data-max="5" placeholder="ZIP">
                                 <p class="alert alert-danger d-none form-profile-alert-zip_code"></p>
                             </div>
                         </div>
@@ -127,10 +124,10 @@
                         <div class="center flex-wrap gap-2">
                             <select name="phone_code" class="form-select form-select-sm p-1 border-0 border-bottom shadow-none max-w-180px">
                                 @foreach ($ipc as $item)
-                                    <option value="{{ $item['code'] }}" @if($item['code'] == $profile->phone_code) selected @endif>{{ $item['country'] }} {{ $item['code'] }}</option>
+                                    <option value="{{ $item['code'] }}" @if($item['code'] == $user->phone_code) selected @endif>{{ $item['country'] }} {{ $item['code'] }}</option>
                                 @endforeach
                             </select>
-                            <input type="text" name="phone_number" value="{{ $profile->phone_number }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none col input-numeric-only" placeholder="Contact">
+                            <input type="text" name="phone_number" value="{{ $user->phone_number }}" class="form-control form-control-sm p-1 border-0 border-bottom shadow-none col input-numeric-only" placeholder="Contact">
                         </div>
                     </div>
                     <div class="center-end mt-4">

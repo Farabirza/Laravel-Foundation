@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center justify-content-end gap-2">
-                    <button id="modal-auth-btn-submit" type="button" class="btn btn-sm btn-dark">Submit</button>
+                    <button id="modal-auth-btn-submit" type="submit" class="btn btn-sm btn-dark">Submit</button>
                 </div>
                 </form>
             </div>
@@ -134,7 +134,7 @@
 <script type="text/javascript">
 // ==================== Authentication Start ==================== //
 var authAction = '/';
-$('#modal-auth-btn-submit').on('click', function(e) {
+$('#modal-auth-btn-submit').on('submit', function(e) {
     e.preventDefault();
     $('.alert').hide();
     let form = $('#modal-auth-form');

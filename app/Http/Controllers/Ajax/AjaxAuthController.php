@@ -18,34 +18,6 @@ class AjaxAuthController extends AjaxController
     public function action(Request $request)
     {
         switch ($request->action) {
-            case 'check_username':
-                $exist = (User::where('username', $request->username)->first()) ? true : false;
-                $error = false; $messages = [];
-                if(strlen($request->username) < 3) {
-                    $messages[] = "minimal terdiri atas 3 karakter";
-                    $error = true;
-                }
-                if(preg_match("/^[A-Za-z0-9]+$/", $request->username) == 0) {
-                    $messages[] = "hanya gunakan kombinasi huruf dan angka";
-                    $error = true;
-                }
-                if($exist) {
-                    $messages[] = "username telah digunakan";
-                    $error = true;
-                }
-                if($error) {
-                    return response()->json([
-                        'available' => false,
-                        'message' => $messages,
-                    ], 200);
-                }
-                $messages[] = "username dapat digunakan";
-                return response()->json([
-                    'available' => true,
-                    'message' => $messages,
-                ], 200);
-            break;
-
             case 'send-otp':
                 $validator = Validator::make($request->all(), [
                     'email' => ['required', 'email', 'exists:users,email'],
@@ -75,11 +47,10 @@ class AjaxAuthController extends AjaxController
 
                 Mail::to($request->email)->send(new OtpMail($otp));
 
-                return response()->json([
-                    'message' => 'OTP code has been sent to your email',
-                    'otp_exp' => $otp_exp
-                ], 200);
-            break;
+            return response()->json([
+                'message' => 'OTP code has been sent to your email',
+                'otp_exp' => $otp_exp
+            ], 200);
 
             case 'submit-otp':
                 $otp_code = '';
@@ -144,10 +115,9 @@ class AjaxAuthController extends AjaxController
                     'failed_login_attempt' => 0,
                     'password' => Hash::make($request->password),
                 ]);
-                return response()->json([
-                    'message' => "Password successfully reset",
-                ], 200);
-            break;
+            return response()->json([
+                'message' => "Password successfully reset",
+            ], 200);
         }
         return response()->json("Function not found", 404);
     }

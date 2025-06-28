@@ -30,24 +30,7 @@ class AjaxAccountController extends AjaxController
         switch($request->action) {
             case 'update-account':
                 $user = auth()->user();
-                
-                // Username
-                $old_username = $user->username;
-                if($request->has('username') && $request->username != '' && $request->username != auth()->user()->username) {
-                    $validator = Validator::make($request->all(), [
-                        'username' => ['required', 'max:50', 'unique:users,username,'.auth()->user()->id],
-                    ], [
-                        'username.required' => 'Username cannot be empty',
-                        'username.unique' => 'Username already used',
-                    ]);
-                    if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
-    
-                    User::where('id', auth()->user()->id)->update([
-                        'username' => $request->username,
-                    ]);
-                    $this->activity_logs->write("'{$user->email}' username updated from '{$old_username}' to '{$request->username}'");
-                }
-                
+
                 // Password
                 if($request->has('password') && $request->password != '') {
                     $validator = Validator::make($request->all(), [
@@ -59,7 +42,7 @@ class AjaxAccountController extends AjaxController
                         'password.confirmed' => "Password confirmation doesn't match",
                     ]);
                     if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
-    
+
                     User::where('id', auth()->user()->id)->update([
                         'password' => Hash::make($request->password),
                     ]);
@@ -83,12 +66,11 @@ class AjaxAccountController extends AjaxController
                         $this->logs->write($e->getMessage());
                     }
                 }
-
                 DB::commit();
-                return response()->json([
-                    'message' => 'Account updated'
-                ], 200);
-            break;
+
+            return response()->json([
+                'message' => 'Account updated'
+            ], 200);
 
             case 'save-profile':
                 $user = auth()->user();
@@ -99,9 +81,8 @@ class AjaxAccountController extends AjaxController
                 ]);
                 if ($validator->fails()) return response()->json(['errors' => $validator->errors()], 422);
 
-                $profile = Profile::updateOrCreate([
-                    'user_id'           => auth()->user()->id
-                ], [
+                $profile = User::where('id', auth()->user()->id)
+                ->update([
                     'full_name'         => $request->full_name,
                     'gender'            => $request->gender,
                     'address_country'   => $request->address_country,
@@ -114,17 +95,15 @@ class AjaxAccountController extends AjaxController
                 $this->activity_logs->write("'{$user->email}' account data updated");
                 DB::commit();
 
-                return response()->json([
-                    'profile' => $profile,
-                    'message' => 'Profile saved'
-                ], 200);
-            break;
+            return response()->json([
+                'profile' => $profile,
+                'message' => 'Profile saved'
+            ], 200);
 
             default:
-                return response()->json([
-                    'Action not valid'
-                ], 400);
-            break;
+            return response()->json([
+                'Action not valid'
+            ], 400);
         }
     }
 }

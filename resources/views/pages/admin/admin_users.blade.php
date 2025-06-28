@@ -3,7 +3,6 @@
 @push('css-styles')
 <link href="{{ asset('/vendor/datatables/datatables.min.css') }}" rel="stylesheet">
 <style>
-#content-wrapper { padding: 2.75rem 2.25rem; }
 .dropdown-item:hover { background: #d9d9d9; }
 
 @media (max-width: 1199px) {
@@ -118,7 +117,7 @@
                         @foreach($users as $user)
                             <tr>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->username }}</td>
+                                <td>{{ $user->full_name }}</td>
                                 <td>{{ $user->created_at }}</td>
                                 <td>
                                     @if($user->status == 'active')
@@ -342,7 +341,6 @@ function userDetail(user_id) {
     .then((res) => {
         if(res.data != '') {
             $('.user-detail-picture').attr('src', res.data[0].picture_url);
-            $('.user-detail-username').html(res.data[0].username);
             $('.user-detail-email').html(res.data[0].email);
             $('.user-detail-created_at').html(res.data[0].created_date);
             $('.user-detail-web_role').html(res.data[0].web_role.name);
